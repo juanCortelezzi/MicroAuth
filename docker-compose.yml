@@ -27,8 +27,9 @@ services:
       - SECURITY_MODE=
       - KRATOS_PUBLIC_URL=http://kratos:4433/
       - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
-      # Idk what the fuck this is env variable
-      # - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:4455/.ory/kratos/public/ 
+      # Another env variable that idk what it does
+      # - JWKS_URL=http://oathkeeper:4456/.well-known/jwks.json
+      # - SECURITY_MODE=jwks
     networks:
       - intranet
     restart: on-failure
@@ -44,7 +45,8 @@ services:
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
       - LOG_LEVEL=trace
-      # - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:4455/.ory/kratos/public/
+      # Idk what the fuck this is env variable
+      # - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:4455/.ory/kratos/public/ 
     command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
     volumes:
       - type: volume

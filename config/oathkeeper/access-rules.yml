@@ -1,3 +1,7 @@
+# kratos public: "http://kratos:4433"
+# kratos ui: "http://kratos-selfservice-ui-node:4435"
+# oathkeeper: "http://127.0.0.1:4455"
+
 -
   id: "ory:kratos:public"
   upstream:

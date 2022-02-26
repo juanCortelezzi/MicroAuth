@@ -1,3 +1,5 @@
+# kratos ui: "http://127.0.0.1:4455"
+# kratos public: "http://kratos:4433"
 log:
   level: debug
   format: json
@@ -30,7 +32,6 @@ errors:
     redirect:
       enabled: true
       config:
-        # to: http://127.0.0.1:3000/auth/login
         to: http://127.0.0.1:4455/login
         when:
           -

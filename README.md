@@ -13,7 +13,7 @@ know what we are doing and do not need any help whatsoever.
 
 ## Status
 
-By now, only Kratos is working. Oathkeeper needs come configuration tweaking
+By now, only Kratos is working. Oathkeeper needs some configuration tweaking
 since I believe there are multiple port mismatches. Moreover, some paths seem to
 be incorrect and for god sake I cannot figure out the purpose of various
 environment variables.

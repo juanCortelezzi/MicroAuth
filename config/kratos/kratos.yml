@@ -70,7 +70,7 @@ selfservice:
             - hook: session
 
 log:
-  level: debug
+  level: info
   format: text
   leak_sensitive_values: true
 

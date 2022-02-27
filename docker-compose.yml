@@ -31,9 +31,9 @@ services:
       - intranet
 
   kratos:
+    image: oryd/kratos:v0.8.0-alpha.3-sqlite
     depends_on:
       - kratos-migrate
-    image: oryd/kratos:v0.8.0-alpha.3-sqlite
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
       - LOG_LEVEL=trace

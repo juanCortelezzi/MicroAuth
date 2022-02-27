@@ -1,9 +1,16 @@
+# oathkeeper proxy: "http://127.0.0.1:3000"
+# oathkeeper api: "http://127.0.0.1:3001"
+# kratos public: "http://kratos:4433"
+
 log:
   level: debug
   format: json
 
 serve:
+  api:
+    port: 3001
   proxy:
+    port: 3000
     cors:
       enabled: true
       allowed_origins:
@@ -30,8 +37,7 @@ errors:
     redirect:
       enabled: true
       config:
-        # to: http://127.0.0.1:3000/auth/login
-        to: http://127.0.0.1:4455/login
+        to: http://127.0.0.1:3000/login
         when:
           -
             error:
@@ -81,7 +87,7 @@ mutators:
   id_token:
     enabled: true
     config:
-      issuer_url: http://127.0.0.1:4455/
+      issuer_url: http://127.0.0.1:3000/
       jwks_url: file:///etc/config/oathkeeper/id_token.jwks.json
       claims: |
         {

@@ -7,77 +7,68 @@ services:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true&mode=rwc
     volumes:
       - type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
+        source: "kratos-sqlite"
+        target: "/var/lib/sqlite"
         read_only: false
       - type: bind
-        source: ./config/kratos
-        target: /etc/config/kratos
-    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+        source: "./config/kratos"
+        target: "/etc/config/kratos"
+    command: -c "/etc/config/kratos/kratos.yml" migrate sql -e --yes
     restart: on-failure
     networks:
       - intranet
 
   kratos-selfservice-ui-node:
     image: oryd/kratos-selfservice-ui-node:v0.8.0-alpha.3
-    ports:
-      - "4455:4455"
     environment:
       - PORT=4455
-      - SECURITY_MODE=
       - KRATOS_PUBLIC_URL=http://kratos:4433/
-      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
-      # Another env variable that idk what it does
-      # - JWKS_URL=http://oathkeeper:4456/.well-known/jwks.json
-      # - SECURITY_MODE=jwks
+      - KRATOS_BROWSER_URL=http://127.0.0.1:3000/.ory/kratos/public/
+      - JWKS_URL=http://oathkeeper:3001/.well-known/jwks.json
+      - SECURITY_MODE=jwks
+    restart: on-failure
     networks:
       - intranet
-    restart: on-failure
 
   kratos:
+    image: oryd/kratos:v0.8.0-alpha.3-sqlite
     depends_on:
       - kratos-migrate
-    image: oryd/kratos:v0.8.0-alpha.3-sqlite
-    ports:
-      - '4433:4433' # public
-      - '4434:4434' # admin
-    restart: unless-stopped
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
       - LOG_LEVEL=trace
-      # Idk what the fuck this is env variable
-      # - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:4455/.ory/kratos/public/ 
-    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+      - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:3000/.ory/kratos/public/
+    command: serve -c "/etc/config/kratos/kratos.yml" --dev --watch-courier
     volumes:
       - type: volume
-        source: kratos-sqlite
-        target: /var/lib/sqlite
+        source: "kratos-sqlite"
+        target: "/var/lib/sqlite"
         read_only: false
       - type: bind
-        source: ./config/kratos
-        target: /etc/config/kratos
+        source: "./config/kratos"
+        target: "/etc/config/kratos"
+    restart: unless-stopped
     networks:
       - intranet
 
   # Trying to implement oathkeeper, not done yet
-  # oathkeeper:
-  #   image: oryd/oathkeeper:v0.38
-  #   depends_on:
-  #     - kratos
-  #   ports:
-  #     - "3000:4455"
-  #     - "3001:4456"
-  #   command:
-  #     serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
-  #   environment:
-  #     - LOG_LEVEL=debug
-  #   restart: on-failure
-  #   networks:
-  #     - intranet
-  #   volumes:
-  #     - type: bind
-  #       source: ./config/oathkeeper
-  #       target: /etc/config/oathkeeper
+  oathkeeper:
+    image: oryd/oathkeeper:v0.38
+    depends_on:
+      - kratos
+    ports:
+      - "3000:3000"
+    command:
+      serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
+    environment:
+      - LOG_LEVEL=debug
+    volumes:
+      - type: bind
+        source: "./config/oathkeeper"
+        target: "/etc/config/oathkeeper"
+    restart: on-failure
+    networks:
+      - intranet
 
   # Mail service for development
   mailslurper:

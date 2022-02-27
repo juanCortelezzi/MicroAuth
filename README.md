@@ -1,11 +1,13 @@
 # Authentication Microservices (WIP)
 
-Trying to setup authentication microservices with the ORY suite, using Kratos to
-handle authentication and Oathkeeper to handle proxy and Identity and Access
-Proxy (IAP).
+Trying to setup authentication microservices with the ORY suite, using:
+- Kratos to handle authentication.
+- Oathkeeper as a route decision engine.
+- Traefik as a reverse proxy and load balancer.
 
 Since we are 2 experienced developers working on this project, we absolutely
-know what we are doing and do not need any help whatsoever.
+know what we are doing and do not need any help whatsoever. *(Just kidding, we
+are dead lost and need all the guidance possible)*.
 
 ## Documentation
 - [Oathkeeper documentation](https://www.ory.sh/docs/oathkeeper)
@@ -13,7 +15,6 @@ know what we are doing and do not need any help whatsoever.
 
 ## Status
 
-By now, only Kratos is working. Oathkeeper needs some configuration tweaking
-since I believe there are multiple port mismatches. Moreover, some paths seem to
-be incorrect and for god sake I cannot figure out the purpose of various
-environment variables.
+Traefik is now proxy'ing requests to the Kratos and kratos-ui containers based
+on the rules of the Oathkeeper decision engine. The next step is to deploy our
+own kratos-ui instance.

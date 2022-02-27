@@ -2,6 +2,13 @@ global:
   checkNewVersion: true
   sendAnonymousUsage: false
 
+http:
+  middlewares:
+    oathkeeper:
+      forwardAuth:
+        address: "http://oathkeeper:3001/decisions"
+        authResponseHeaders: "X-Id-Token,Authorization"
+
 # (Optional) Log information
 # ---
 # log:

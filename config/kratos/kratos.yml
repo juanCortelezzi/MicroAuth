@@ -1,6 +1,3 @@
-# kratos public: "http://kratos:4433"
-# kratos admin: "http://kratos:4434"
-# kratos ui: "http://127.0.0.1:3000/kui"
 version: v0.7.1-alpha.1
 
 dsn: memory
@@ -21,9 +18,9 @@ serve:
     base_url: http://kratos:4434/
 
 selfservice:
-  default_browser_return_url: http://127.0.0.1:3000/kui/
+  default_browser_return_url: http://127.0.0.1/kui/
   whitelisted_return_urls:
-    - http://127.0.0.1:3000/kui/
+    - http://127.0.0.1/kui/
 
   methods:
     password:
@@ -37,33 +34,33 @@ selfservice:
 
   flows:
     error:
-      ui_url: http://127.0.0.1:3000/kui/error
+      ui_url: http://127.0.0.1/kui/error
 
     settings:
-      ui_url: http://127.0.0.1:3000/kui/settings
+      ui_url: http://127.0.0.1/kui/settings
       privileged_session_max_age: 15m
 
     recovery:
       enabled: true
-      ui_url: http://127.0.0.1:3000/kui/recovery
+      ui_url: http://127.0.0.1/kui/recovery
 
     verification:
       enabled: true
-      ui_url: http://127.0.0.1:3000/kui/verification
+      ui_url: http://127.0.0.1/kui/verification
       after:
-        default_browser_return_url: http://127.0.0.1:3000/kui/
+        default_browser_return_url: http://127.0.0.1/kui/
 
     logout:
       after:
-        default_browser_return_url: http://127.0.0.1:3000/kui/login
+        default_browser_return_url: http://127.0.0.1/kui/login
 
     login:
-      ui_url: http://127.0.0.1:3000/kui/login
+      ui_url: http://127.0.0.1/kui/login
       lifespan: 10m
 
     registration:
       lifespan: 10m
-      ui_url: http://127.0.0.1:3000/kui/registration
+      ui_url: http://127.0.0.1/kui/registration
       after:
         password:
           hooks:

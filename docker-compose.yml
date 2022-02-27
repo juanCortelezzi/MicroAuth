@@ -3,28 +3,16 @@ version: '3.7'
 services:
   traefik:
     image: traefik:v2.6
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     volumes:
-      # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml
       - traefik-ssl-certs:/ssl-certs
     networks:
       - intranet
-
-  # whoami:
-  #   image: traefik/whoami
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.whoami.entrypoints=web"
-  #     - "traefik.http.routers.whoami.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && Path(`/whoami`)"
-  #   networks:
-  #     - intranet
 
   kratos-migrate:
     image: oryd/kratos:v0.8.0-alpha.3-sqlite
@@ -48,9 +36,16 @@ services:
     environment:
       - PORT=4455
       - KRATOS_PUBLIC_URL=http://kratos:4433/
-      - KRATOS_BROWSER_URL=http://127.0.0.1:3000/.ory/kratos/public/
+      - KRATOS_BROWSER_URL=http://127.0.0.1/.ory/kratos/public/
       - JWKS_URL=http://oathkeeper:3001/.well-known/jwks.json
       - SECURITY_MODE=jwks
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kui.entrypoints=web"
+      - "traefik.http.routers.kui.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && PathPrefix(`/kui/`)"
+      - "traefik.http.middlewares.kui-stripprefix.stripprefix.prefixes=/kui"
+      - "traefik.http.routers.kui.middlewares=oathkeeper@file,kui-stripprefix"
+      - "traefik.http.services.kui.loadbalancer.server.port=4455"
     restart: on-failure
     networks:
       - intranet
@@ -62,7 +57,7 @@ services:
     environment:
       - DSN=sqlite:///var/lib/sqlite/db.sqlite?_fk=true
       - LOG_LEVEL=trace
-      - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:3000/.ory/kratos/public/
+      - SERVE_PUBLIC_BASE_URL=http://127.0.0.1/.ory/kratos/public/
     command: serve -c "/etc/config/kratos/kratos.yml" --dev --watch-courier
     volumes:
       - type: volume
@@ -72,6 +67,13 @@ services:
       - type: bind
         source: "./config/kratos"
         target: "/etc/config/kratos"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kratos.entrypoints=web"
+      - "traefik.http.routers.kratos.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && PathPrefix(`/.ory/kratos/public`)"
+      - "traefik.http.middlewares.kratos-stripprefix.stripprefix.prefixes=/.ory/kratos/public"
+      - "traefik.http.routers.kratos.middlewares=oathkeeper@file,kratos-stripprefix"
+      - "traefik.http.services.kratos.loadbalancer.server.port=4433"
     restart: unless-stopped
     networks:
       - intranet
@@ -80,10 +82,8 @@ services:
     image: oryd/oathkeeper:v0.38
     depends_on:
       - kratos
-    ports:
-      - "3000:3000"
     command:
-      serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
+      serve -c "/etc/config/oathkeeper/oathkeeper.yml"
     environment:
       - LOG_LEVEL=debug
     volumes:

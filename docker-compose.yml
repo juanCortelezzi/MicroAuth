@@ -1,6 +1,31 @@
 version: '3.7'
 
 services:
+  traefik:
+    image: traefik:v2.6
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - traefik-ssl-certs:/ssl-certs
+    networks:
+      - intranet
+
+  # whoami:
+  #   image: traefik/whoami
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.whoami.entrypoints=web"
+  #     - "traefik.http.routers.whoami.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && Path(`/whoami`)"
+  #   networks:
+  #     - intranet
+
   kratos-migrate:
     image: oryd/kratos:v0.8.0-alpha.3-sqlite
     environment:
@@ -51,7 +76,6 @@ services:
     networks:
       - intranet
 
-  # Trying to implement oathkeeper, not done yet
   oathkeeper:
     image: oryd/oathkeeper:v0.38
     depends_on:
@@ -84,3 +108,5 @@ networks:
 
 volumes:
   kratos-sqlite:
+  traefik-ssl-certs:
+    driver: local

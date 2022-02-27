@@ -9,7 +9,7 @@
     url: "http://kratos-selfservice-ui-node:4455"
     strip_path: /kui
   match:
-    url: "http://127.0.0.1:3000/kui/<{registration,login,verification,error,recovery,verify,auth/*,**.css,**.js,**.png}{/,}>"
+    url: "http://<{127.0.0.1,localhost}>:3000/kui/<{registration,login,verification,error,recovery,verify,auth/*,**.css,**.js,**.png}{/,}>"
     methods:
       - GET
   authenticators:
@@ -26,7 +26,7 @@
     url: "http://kratos-selfservice-ui-node:4455"
     strip_path: /kui
   match:
-    url: "http://127.0.0.1:3000/kui/<{,debug,dashboard,settings,welcome}>"
+    url: "http://<{127.0.0.1,localhost}>:3000/kui/<{,debug,dashboard,settings,welcome}>"
     methods:
       - GET
   authenticators:
@@ -47,7 +47,7 @@
     url: "http://kratos:4433"
     strip_path: /.ory/kratos/public
   match:
-    url: "http://127.0.0.1:3000/.ory/kratos/public/<**>"
+    url: "http://<{127.0.0.1,localhost}>:3000/.ory/kratos/public/<**>"
     methods:
       - GET
       - POST

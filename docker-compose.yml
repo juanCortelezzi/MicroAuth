@@ -40,7 +40,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.kui.entrypoints=web"
-      - "traefik.http.routers.kui.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && PathPrefix(`/kui/`)"
+      - "traefik.http.routers.kui.rule=(Host(`127.0.0.1`) || Host(`localhost`)) && PathPrefix(`/kui`)"
       - "traefik.http.middlewares.kui-stripprefix.stripprefix.prefixes=/kui"
       - "traefik.http.routers.kui.middlewares=oathkeeper@file,kui-stripprefix"
       - "traefik.http.services.kui.loadbalancer.server.port=4455"
@@ -84,6 +84,18 @@ services:
       - LOG_LEVEL=debug
     volumes:
       - "./config/oathkeeper:/etc/config/oathkeeper"
+    restart: on-failure
+    networks:
+      - microauth-intranet
+
+  maui:
+    image: maui
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.maui.entrypoints=web"
+      - "traefik.http.routers.maui.rule=Host(`127.0.0.1`) || Host(`localhost`)"
+      - "traefik.http.routers.maui.middlewares=oathkeeper@file"
+      - "traefik.http.services.maui.loadbalancer.server.port=3000"
     restart: on-failure
     networks:
       - microauth-intranet

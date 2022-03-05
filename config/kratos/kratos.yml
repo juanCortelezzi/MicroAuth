@@ -18,7 +18,7 @@ serve:
     base_url: http://kratos:4434/
 
 selfservice:
-  default_browser_return_url: http://127.0.0.1/kui/
+  default_browser_return_url: http://127.0.0.1/protected
   whitelisted_return_urls:
     - http://127.0.0.1/kui/
 

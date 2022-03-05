@@ -1,7 +1,7 @@
 -
-  id: "ory:kui:anonymous"
+  id: "ory:kui:public"
   match:
-    url: "http://<{127.0.0.1,localhost}>/kui/<{registration*,login*,verification*,error*,recovery*,**.css,**.js,**.png}{/,}>"
+    url: "http://<{127.0.0.1,localhost}>/kui/<{,registration*,login*,verification*,error*,recovery*,**.css,**.js,**.png,favicon.ico}{/,}>"
     methods:
       - GET
   authenticators:
@@ -40,6 +40,36 @@
       - PATCH
   authenticators:
     - handler: noop
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: noop
+
+-
+  id: "maui:protected"
+  match:
+    url: "http://<{127.0.0.1,localhost}>/protected"
+    methods:
+      - GET
+  authenticators:
+    - handler: cookie_session
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: id_token
+  errors:
+    - handler: redirect
+      config:
+        to: http://127.0.0.1/kui/login
+
+-
+  id: "maui:public"
+  match:
+    url: "http://<{127.0.0.1,localhost}{,/}{,_next**,favicon.ico}{,/}>"
+    methods:
+      - GET
+  authenticators:
+    - handler: anonymous
   authorizer:
     handler: allow
   mutators:
